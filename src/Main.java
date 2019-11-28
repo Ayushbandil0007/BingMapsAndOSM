@@ -15,8 +15,8 @@ import java.util.Collection;
  */
 
 public class Main {
-    private static String from = "redmond%2Cwa";
-    private static String to = "Issaquah%2Cwa";
+    private static String from = "Seattle%2Cwa";
+    private static String to = "Tacoma%2Cwa";
     private static ArrayList<Coordinates> bingCoordinates;
     private static ArrayList<Coordinates> osmCoordinates;
 

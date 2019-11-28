@@ -33,7 +33,7 @@ public class XYPlotter extends ApplicationFrame {
         );
 
         final ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new java.awt.Dimension(1200, 800));
+        chartPanel.setPreferredSize(new java.awt.Dimension(1200, 1200));
         final XYPlot plot = chart.getXYPlot();
         ValueAxis domainAxis = plot.getDomainAxis();
         ValueAxis rangeAxis = plot.getRangeAxis();
