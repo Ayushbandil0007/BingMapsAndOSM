@@ -33,15 +33,25 @@ public class XYPlotter extends ApplicationFrame {
         );
 
         final ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new java.awt.Dimension(1200, 1200));
+        chartPanel.setPreferredSize(new java.awt.Dimension(1000, 1000));
         final XYPlot plot = chart.getXYPlot();
         ValueAxis domainAxis = plot.getDomainAxis();
         ValueAxis rangeAxis = plot.getRangeAxis();
 
         Double[] domainRange = getDomainRange(bingCoordinates, osmCoordinates);
         Double[] rangeRange = getRangeRange(bingCoordinates, osmCoordinates);
-        domainAxis.setRange(domainRange[0] - 0.01d, domainRange[1] + 0.01d);
-        rangeAxis.setRange(rangeRange[0] - 0.01d, rangeRange[1] + 0.01d);
+        double domainLen = domainRange[1] - domainRange[0];
+        double rangeLen = rangeRange[1] - rangeRange[0];
+        if (domainLen > rangeLen) {
+            double diff = domainLen - rangeLen;
+            domainAxis.setRange(domainRange[0] - 0.01d, domainRange[1] + 0.01d);
+            rangeAxis.setRange(rangeRange[0] - 0.01d - diff / 2, rangeRange[1] + 0.01d + diff / 2);
+        } else {
+            double diff = rangeLen - domainLen;
+            domainAxis.setRange(domainRange[0] - 0.01d - diff / 2, domainRange[1] + 0.01d + diff / 2);
+            rangeAxis.setRange(rangeRange[0] - 0.01d, rangeRange[1] + 0.01d);
+        }
+
 
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         renderer.setSeriesPaint(0, Color.GREEN);
@@ -65,11 +75,11 @@ public class XYPlotter extends ApplicationFrame {
         ArrayList<Coordinates> temp = (ArrayList<Coordinates>) bingCoordinates.clone();
         temp.addAll(osmCoordinates);
 
-        temp.forEach(point ->{
-            if (point.getLon()< domainRange[0]){
+        temp.forEach(point -> {
+            if (point.getLon() < domainRange[0]) {
                 domainRange[0] = Double.valueOf(point.getLon());
             }
-            if (point.getLon()> domainRange[1]) {
+            if (point.getLon() > domainRange[1]) {
                 domainRange[1] = Double.valueOf(point.getLon());
             }
         });
@@ -82,11 +92,11 @@ public class XYPlotter extends ApplicationFrame {
         ArrayList<Coordinates> temp = (ArrayList<Coordinates>) bingCoordinates.clone();
         temp.addAll(osmCoordinates);
 
-        temp.forEach(point ->{
-            if (point.getLat()< rangeRange[0]){
+        temp.forEach(point -> {
+            if (point.getLat() < rangeRange[0]) {
                 rangeRange[0] = Double.valueOf(point.getLat());
             }
-            if (point.getLat()> rangeRange[1]) {
+            if (point.getLat() > rangeRange[1]) {
                 rangeRange[1] = Double.valueOf(point.getLat());
             }
         });
