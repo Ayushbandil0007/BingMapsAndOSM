@@ -123,6 +123,7 @@ public class BingRequestMessage {
         toReturn = (distanceBeforeFirstTurn != null) ? append(toReturn, "dbft=" + distanceBeforeFirstTurn) : toReturn;
         toReturn = (heading != null) ? append(toReturn, "hd=" + heading) : toReturn;
         toReturn = append(toReturn, "optimize=" + optimize.toString());
+        toReturn = append(toReturn, "routePathOutput=Points");
         toReturn = append(toReturn, "key=" + bingMapsKey);
 
         return toReturn;

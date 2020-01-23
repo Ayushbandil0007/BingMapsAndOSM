@@ -1,21 +1,38 @@
+import java.util.Objects;
+
 /**
  * Created by Ayush Bandil on 22/11/2019.
  */
 public class Coordinates {
-    private Float lat;
-    private Float lon;
+    private double lat;
+    private double lon;
+    private int routeId;
 
     public Coordinates(Float lat, Float lon) {
         this.lat = lat;
         this.lon = lon;
     }
 
-    public Float getLat() {
+    public Coordinates(double lat, double lon, int routeId) {
+        this.lat = lat;
+        this.lon = lon;
+        this.routeId = routeId;
+    }
+
+    public double getLat() {
         return lat;
     }
 
-    public Float getLon() {
+    public double getLon() {
         return lon;
+    }
+
+    public int getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(int routeId) {
+        this.routeId = routeId;
     }
 
     public Coordinates(Float[] coordinates) {
@@ -30,5 +47,18 @@ public class Coordinates {
         } else {
             new Coordinates(coordinates);
         }
+    }
+
+    public String convertToString(){
+        return this.getLat() + "," + this.getLon();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Coordinates)){
+            return false;
+        }
+        Coordinates other = (Coordinates) o;
+        return Objects.equals(other.getLat(), this.lat) && Objects.equals(other.getLon(), this.lon);
     }
 }

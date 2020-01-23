@@ -25,6 +25,6 @@ public class OsmRequestMessage {
     }
 
     private String appendCoodinates(String parent, Coordinates coordinates) {
-        return parent + coordinates.getLon().toString() + "," + coordinates.getLat().toString();
+        return parent + coordinates.getLon() + "," + coordinates.getLat();
     }
 }
