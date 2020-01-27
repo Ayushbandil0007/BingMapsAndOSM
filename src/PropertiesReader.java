@@ -8,7 +8,7 @@ import java.util.Properties;
 public class PropertiesReader {
     static Properties properties = new Properties();
 
-    static String getValue(String key){
+    static String getString(String key){
         try {
             properties.load(new FileInputStream("D:\\Projects\\BingMapsRestApi\\resources\\project.properties"));
             return properties.getProperty(key);
@@ -17,4 +17,25 @@ public class PropertiesReader {
         }
         return null;
     }
+
+    static Integer getInt(String key){
+        try {
+            properties.load(new FileInputStream("D:\\Projects\\BingMapsRestApi\\resources\\project.properties"));
+            return Integer.valueOf(properties.getProperty(key));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    static Double getDouble(String key){
+        try {
+            properties.load(new FileInputStream("D:\\Projects\\BingMapsRestApi\\resources\\project.properties"));
+            return Double.valueOf(properties.getProperty(key));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

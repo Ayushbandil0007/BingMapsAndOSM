@@ -15,26 +15,51 @@ import java.util.*;
 public class Main {
     private static String from = "";
     private static String to = "";
-    private static String area = "Seattle";
+    public static String area = "Perth";
     private static ArrayList<Coordinates> bingCoordinates;
     private static ArrayList<Coordinates> osmCoordinates;
 
     public static void main(String[] args) {
-
         ArrayList<Coordinates> areaCoordinates = generateAreaCoordinates();
 
+        for (int runCount = 0; runCount < PropertiesReader.getInt("noOfRuns"); runCount++) {
+            System.out.println("Processing " + (runCount + 1) + " route in " + area);
+            try {
+                processOneRoute(areaCoordinates);
+            } catch (Exception e){
+                System.out.println("Could not process " + runCount + "th count");
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static void processOneRoute(ArrayList<Coordinates> areaCoordinates) {
         Coordinates fromCor = null;
         Coordinates toCor = null;
 
-        while (fromCor == null || fromCor.getRouteId() != 0) {
+        while (fromCor == null
+//                || fromCor.getRouteId() != 0
+                )
+        {
             fromCor = areaCoordinates.get((int) (Math.random() * areaCoordinates.size()));
             from = fromCor.convertToString();
         }
 
-        while (toCor == null || toCor.getRouteId() != 0 || to.equals(from)) {
+        while (toCor == null
+//                || toCor.getRouteId() != 0
+                || to.equals(from)
+                || getDist(fromCor, toCor) < PropertiesReader.getInt("fromToMinDist"))
+        {
             toCor = areaCoordinates.get((int) (Math.random() * areaCoordinates.size()));
             to = toCor.convertToString();
         }
+
+
+        System.out.println("   From " + from + ", to " + to);
 
         // Processing Bing
         {
@@ -58,17 +83,23 @@ public class Main {
             osmCoordinates = response.getOsmCoordinates();
         }
 
-        generateGraph();
+//        generateGraph();
 
         insertNewCordinates(areaCoordinates);
 
         Analysis.doAnalysis(bingCoordinates, osmCoordinates);
+    }
 
+    private static double getDist(Coordinates fromCor, Coordinates toCor) {
+        String disQuery = PropertiesReader.getString("disQuery");
+        disQuery = disQuery.replace("<POINT1_COR>", fromCor.getLon() + " " + fromCor.getLat());
+        disQuery = disQuery.replace("<POINT2_COR>", toCor.getLon() + " " + toCor.getLat());
+        Double dist = ConnectionUtils.executeJdbcSingleOutputQuery(disQuery);
+        return dist;
     }
 
     private static void insertNewCordinates(ArrayList<Coordinates> areaCoordinates) {
         Connection con = ConnectionUtils.getConnection();
-        Float lat = 0f, lon = 0f;
         final int[] count = {0};
 
         bingCoordinates.forEach(cor -> {
@@ -92,25 +123,22 @@ public class Main {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("Sucessfully inserted " + count[0] + " entries");
+        System.out.println("   Sucessfully inserted " + count[0] + " new coordinates in " + area);
     }
 
     private static void insertCoordinate(double lat, double lon, Connection con) {
-        try {
-            PreparedStatement ps = con.prepareStatement("INSERT INTO COORDINATES" +
-                    "([CITY]\n" +
-                    ",[Lat]\n" +
-                    ",[Long]\n" +
-                    ",[Priority])\n" +
-                    "VALUES\n" +
-                    "('" + area +
-                    "'," + lat +
-                    "," + lon +
-                    "," + 1 + ")");
-            ps.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        String query = "INSERT INTO COORDINATES" +
+                "([CITY]\n" +
+                ",[Lat]\n" +
+                ",[Long]\n" +
+                ",[Priority])\n" +
+                "VALUES\n" +
+                "('" + area +
+                "'," + lat +
+                "," + lon +
+                "," + 1 + ")";
+
+        ConnectionUtils.executeJdbcQuery(query);
     }
 
     private static void generateGraph() {

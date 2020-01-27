@@ -19,7 +19,7 @@ public class OsmApiResponse {
         ArrayList<Steps> steps = routes.get(0).getLegs().get(0).getSteps();
 //        allCoordinates.add();
 
-        steps.forEach(step -> allCoordinates.add(new Coordinates(step.getManeuver().getLocation(), true)));
+        steps.forEach(step -> allCoordinates.add(new Coordinates(step.getManeuver().getLocation(), true, 1)));
         return allCoordinates;
     }
 }
@@ -160,13 +160,13 @@ class Steps {
 }
 
 class Intersections {
-    private Float[] location = new Float[2];
+    private Double[] location = new Double[2];
 }
 
 class Maneuver {
-    private Float[] location = new Float[2];
+    private Double[] location = new Double[2];
 
-    public Float[] getLocation() {
+    public Double[] getLocation() {
         return location;
     }
 }

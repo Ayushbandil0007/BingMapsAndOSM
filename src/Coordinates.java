@@ -4,16 +4,16 @@ import java.util.Objects;
  * Created by Ayush Bandil on 22/11/2019.
  */
 public class Coordinates {
-    private double lat;
-    private double lon;
+    private Double lat;
+    private Double lon;
     private int routeId;
 
-    public Coordinates(Float lat, Float lon) {
+    public Coordinates(Double lat, Double lon) {
         this.lat = lat;
         this.lon = lon;
     }
 
-    public Coordinates(double lat, double lon, int routeId) {
+    public Coordinates(Double lat, Double lon, int routeId) {
         this.lat = lat;
         this.lon = lon;
         this.routeId = routeId;
@@ -35,17 +35,20 @@ public class Coordinates {
         this.routeId = routeId;
     }
 
-    public Coordinates(Float[] coordinates) {
+
+    public Coordinates(Double[] coordinates, int routeId) {
         this.lat = coordinates[0];
         this.lon = coordinates[1];
+        this.routeId = routeId;
     }
 
-    public Coordinates(Float[] coordinates, boolean isInverted) {
+    public Coordinates(Double[] coordinates, boolean isInverted, int routeId) {
         if (isInverted) {
             this.lat = coordinates[1];
             this.lon = coordinates[0];
+            this.routeId = routeId;
         } else {
-            new Coordinates(coordinates);
+            new Coordinates(coordinates, routeId);
         }
     }
 

@@ -45,12 +45,12 @@ public class BingApiResponse {
     public ArrayList<Coordinates> getBingCoordinates() {
         ArrayList<Coordinates> allCoordinates = new ArrayList<>();
         RouteLegs routeLegs = getResourceSets().get(0).getResources().get(0).getRouteLegs().get(0);
-        Coordinates start = new Coordinates(routeLegs.getActualStart().getCoordinates());
+        Coordinates start = new Coordinates(routeLegs.getActualStart().getCoordinates(), 1);
         allCoordinates.add(start);
 
-        routeLegs.getItineraryItems().forEach(item -> allCoordinates.add(new Coordinates(item.getManeuverPoint().getCoordinates())));
+        routeLegs.getItineraryItems().forEach(item -> allCoordinates.add(new Coordinates(item.getManeuverPoint().getCoordinates(), 1)));
 
-        Coordinates end = new Coordinates(routeLegs.getActualEnd().getCoordinates());
+        Coordinates end = new Coordinates(routeLegs.getActualEnd().getCoordinates(),1);
         allCoordinates.add(end);
 
         return allCoordinates;
@@ -186,7 +186,7 @@ class RouteLegs {
 
 class ActualPoints {
     private String type = "";
-    private Float[] coordinates = new Float[2];
+    private Double[] coordinates = new Double[2];
 
     public String getType() {
         return type;
@@ -196,11 +196,11 @@ class ActualPoints {
         this.type = type;
     }
 
-    public Float[] getCoordinates() {
+    public Double[] getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(Float[] coordinates) {
+    public void setCoordinates(Double[] coordinates) {
         this.coordinates = coordinates;
     }
 }
@@ -232,7 +232,7 @@ class ItineraryItemDetails {
 
 class ManeuverPoint{
     private String type = "";
-    Float[] coordinates = new Float[2];
+    Double[] coordinates = new Double[2];
 
     public String getType() {
         return type;
@@ -242,11 +242,11 @@ class ManeuverPoint{
         this.type = type;
     }
 
-    public Float[] getCoordinates() {
+    public Double[] getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(Float[] coordinates) {
+    public void setCoordinates(Double[] coordinates) {
         this.coordinates = coordinates;
     }
 }

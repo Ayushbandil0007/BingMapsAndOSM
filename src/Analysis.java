@@ -2,15 +2,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Created by Ayush Bandil on 22/11/2019.
  */
 public class Analysis {
-    private static double tolerance = 100; //in meters
+    private static double tolerance = 200; //in meters
     private static double avgDeflection = 0d;
     private static int totalPoints = 0;
+    private static HashMap<Integer, AreaDeflection> areaDefMap = new HashMap<>();
+
 
     public static void doAnalysis(ArrayList<Coordinates> bingCoordinates, ArrayList<Coordinates> osmCoordinates) {
 
@@ -19,8 +21,6 @@ public class Analysis {
 
         // each pair of adjacent points in Bing are connected through a line and the minimum distance is calculated for each point on OSM
         getDeflectionBasedOnLineSegments(bingCoordinates, osmCoordinates);
-
-
     }
 
     private static void getDeflectionBasedOnLineSegments(ArrayList<Coordinates> bingCoordinates, ArrayList<Coordinates> osmCoordinates) {
@@ -28,13 +28,14 @@ public class Analysis {
         int count = 0;
         for (Coordinates osmCoordinate : osmCoordinates) {
             count++;
-            double dist = getLeastDistanceFromSetOfLinesUsingCode(osmCoordinate, bingCoordinates);
+//            double dist = getLeastDistanceFromSetOfLinesUsingCode(osmCoordinate, bingCoordinates);
             double dist1 = getLeastDistanceFromSetOfLinesUsingSql(osmCoordinate, bingCoordinates);
+//            System.out.println("Point " + count + " difference is " + (dist - dist1));
 
-            if (dist < tolerance) {
-                osmDistances.add(dist);
+            if (dist1 < PropertiesReader.getInt("tolerance")) {
+                osmDistances.add(dist1);
             } else {
-                System.out.println("deflection for " + count + "th element " + osmCoordinate.getLat() + ", " + osmCoordinate.getLat() + " with distance " + dist + " is skipped");
+//                System.out.println("deflection for " + count + "th element " + osmCoordinate.getLat() + ", " + osmCoordinate.getLat() + " with distance " + dist1 + " is skipped");
             }
         }
 
@@ -44,7 +45,7 @@ public class Analysis {
     private static double getLeastDistanceFromSetOfLinesUsingSql(Coordinates osmCoordinate, ArrayList<Coordinates> bingCoordinates) {
         Connection con = ConnectionUtils.getConnection();
         double min = 0d;
-        String query = PropertiesReader.getValue("minDistanceQuery");
+        String query = PropertiesReader.getString("minDistanceQuery");
         final String[] bingString = {""};
 
         bingCoordinates.forEach(cor -> {
@@ -68,16 +69,105 @@ public class Analysis {
             e.printStackTrace();
         }
 
-        System.out.println("Minimum distance is " + min);
+//        System.out.println("Minimum distance is " + min + " from SQL Server");
         return min;
     }
 
     private static void updateAvgDeflection(ArrayList<Double> osmDistances) {
-        for (Double dist : osmDistances) {
-            avgDeflection = (avgDeflection * totalPoints + dist) / (totalPoints + 1);
-            totalPoints++;
+        if (areaDefMap.size() == 0) {
+            areaDefMap = intializeAreaDef(Main.area);
         }
-        System.out.println("Average deflection = " + avgDeflection + " for " + totalPoints + " points");
+
+        for (Double dist : osmDistances) {
+            Integer rangeUpper = (int) Math.ceil(dist / 5) * 5;
+            if (areaDefMap.containsKey(rangeUpper)) {
+                AreaDeflection avgDef = areaDefMap.get(rangeUpper);
+                Integer noOfPoints = avgDef.getNoOfPoints();
+                Double avgDeflection = avgDef.getAvgDeflection();
+                avgDeflection = (avgDeflection * noOfPoints + dist) / (noOfPoints + 1);
+                avgDef.setAvgDeflection(avgDeflection);
+                avgDef.setNoOfPoints(noOfPoints + 1);
+                areaDefMap.put(rangeUpper, avgDef);
+            } else {
+                AreaDeflection avgDef = new AreaDeflection(new Area(Main.area, null, null), rangeUpper, null, dist, 1);
+                areaDefMap.put(rangeUpper, avgDef);
+            }
+        }
+        System.out.println("   Updated average deflection using " + osmDistances.size() + " points");
+        updateAvgDefTable();
+    }
+
+    private static void updateAvgDefTable() {
+        String city = Main.area;
+        String clearQuery = PropertiesReader.getString("clearPrevAreaDefEntries");
+        clearQuery = clearQuery.replace("<CITY>", city);
+        ConnectionUtils.executeJdbcQuery(clearQuery);
+//        System.out.println("Previous entries for " + city + " have been cleared");
+
+        String insertQuery = "";
+        ArrayList<String> queries = new ArrayList<>();
+
+
+        ArrayList<Integer> sortedKeys =
+                new ArrayList<>(areaDefMap.keySet());
+        Collections.sort(sortedKeys);
+
+        // Display the TreeMap which is naturally sorted
+        for (Integer x : sortedKeys) {
+            AreaDeflection areaDeflection = areaDefMap.get(x);
+            insertQuery = PropertiesReader.getString("areaDefInsertQuery");
+            insertQuery = insertQuery.replace("<CITY>", city);
+            insertQuery = insertQuery.replace("<STATE>", "");
+            insertQuery = insertQuery.replace("<COUNTRY>", "");
+            insertQuery = insertQuery.replace("<MAX_DEF_RANGE>", areaDeflection.getRangeUpper().toString());
+            insertQuery = insertQuery.replace("<AVG_DEFLECTION>", areaDeflection.getAvgDeflection().toString());
+            insertQuery = insertQuery.replace("<DATASET_PTS_COUNT>", areaDeflection.getNoOfPoints().toString());
+            queries.add(insertQuery);
+        }
+        ConnectionUtils.executeJdbcBatchQuery(queries);
+    }
+
+    private static HashMap<Integer, AreaDeflection> intializeAreaDef(String areaStr) {
+        HashMap<Integer, AreaDeflection> areaDefMap = new HashMap<>();
+        Area area = new Area(areaStr);
+        Connection con = ConnectionUtils.getConnection();
+
+        String query = PropertiesReader.getString("areaDefQuery");
+        if (area.getCity() != null) {
+            query = query.replace("<CITY>", area.getCity());
+        } else {
+            query = query.replace("CITY = '<CITY>'", "");
+        }
+        if (area.getState() != null) {
+            query = query.replace("<STATE>", area.getState());
+        } else {
+            query = query.replace(" and STATE = '<STATE>'", "");
+        }
+        if (area.getCountry() != null) {
+            query = query.replace("<COUNTRY>", area.getCountry());
+        } else {
+            query = query.replace(" and COUNTRY = '<COUNTRY>'", "");
+        }
+
+        PreparedStatement ps = null;
+        try {
+            ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Integer maxDefRange = rs.getInt("MAX_DEF_RANGE");
+                areaDefMap.put(maxDefRange, new AreaDeflection(new Area(rs.getString("CITY"), rs.getString("STATE"),
+                        rs.getString("COUNTRY")), maxDefRange, null, rs.getDouble("AVG_DEFLECTION"), rs.getInt("DATASET_PTS_COUNT")));
+            }
+            rs.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return areaDefMap;
+    }
+
+    private static CharSequence wrapStr(String string) {
+        return "'" + string + "'";
     }
 
     private static double getLeastDistanceFromSetOfLinesUsingCode(Coordinates coordinates, ArrayList<Coordinates> bingCoordinates) {
@@ -90,7 +180,7 @@ public class Analysis {
                 min = dist;
             }
         }
-        System.out.println("Minimum distance is " + min + " from code");
+//        System.out.println("Minimum distance is " + min + " from code");
         return min;
     }
 
@@ -130,13 +220,6 @@ public class Analysis {
 
     private static double lonFactor(double y1) {
         return 111000d * Math.cos(y1 * Math.PI / 180);
-    }
-
-
-    public static void main(String[] args) {
-        Coordinates first = new Coordinates(2f, 0f);
-        Coordinates second = new Coordinates(0f, -2f);
-        double dis = getLeastDisFromLine(first, second, new Coordinates(0f, 0f));
     }
 
     private static void getDeflectionBasedOnPoints(ArrayList<Coordinates> bingCoordinates, ArrayList<Coordinates> osmCoordinates) {
