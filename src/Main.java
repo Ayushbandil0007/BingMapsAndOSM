@@ -18,6 +18,7 @@ public class Main {
     public static String area = "Perth";
     private static ArrayList<Coordinates> bingCoordinates;
     private static ArrayList<Coordinates> osmCoordinates;
+    private static ArrayList<Coordinates> googleCoordinates;
 
 
 
@@ -90,6 +91,20 @@ public class Main {
             osmCoordinates = response.getOsmCoordinates();
         }
 
+        // Process Google Maps
+        {
+            JavaRequestMessage jrm = new JavaRequestMessage();
+            jrm.setOutputFormat(OutputFormats.json);
+            List<Coordinates> route = new ArrayList<>();
+            route.add(bingCoordinates.get(0));
+            route.add(bingCoordinates.get(bingCoordinates.size() - 1));
+            Collection<ToAvoidGM> avoid = new ArrayList<>();
+            avoid.add(ToAvoidGM.tolls);
+            jrm.setAvoid(avoid);
+            jrm.setRouteCoords(route);
+            String request = jrm.generateGRequest();
+            googleCoordinates = jrm.parseJson(jrm.getJsonResponse(request));
+        }
 //        generateGraph();
 
         //go to imnmplementation for explanation

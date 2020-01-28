@@ -47,7 +47,11 @@ public class JavaRequestMessage {
 //	private String myDest;
 	private Coordinates myDestCoordinates;
 	private Collection<ToAvoidGM> myAvoid;
-	
+
+	/**
+	 * Testing. Used coords for Seattle as start,
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		JavaRequestMessage jrm = new JavaRequestMessage();
 //		List<String> route = new ArrayList<>();
