@@ -1,6 +1,10 @@
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,28 +42,72 @@ public class JavaRequestMessage {
 	
 	private TransModesGM myMode;
 	private OutputFormats myFormat;
-	private String myOrigin;
-	private String myDest; 
+//	private String myOrigin;
+	private Coordinates myOriginCoordinates;
+//	private String myDest;
+	private Coordinates myDestCoordinates;
 	private Collection<ToAvoidGM> myAvoid;
 	
 	public static void main(String[] args) {
 		JavaRequestMessage jrm = new JavaRequestMessage();
-		List<String> route = new ArrayList<>();
-		route.add("Seattle");
-		route.add("Tacoma");
-		jrm.setRoute(route);
+//		List<String> route = new ArrayList<>();
+//		route.add("Seattle");
+//		route.add("Tacoma");
+//		jrm.setRoute(route);
+		List<Coordinates> route = new ArrayList<>();
+		route.add(new Coordinates(47.4642007,-122.2664857));
+		route.add(new Coordinates(47.2527802,-122.4442681));
+		jrm.setRouteCoords(route);
 		jrm.setOutputFormat(OutputFormats.json);
-		String str2 = jrm.generateGRequest();
-		System.out.println(str2);
-		System.out.println(jrm.getJsonResponse(str2));
+		String request = jrm.generateGRequest();
+		System.out.print(request);
+		ArrayList<Coordinates> coords = jrm.parseJson(jrm.getJsonResponse(request));
+		for (Coordinates c : coords) {
+			System.out.println(c.convertToString());
+		}
+	}
+
+	public ArrayList<Coordinates> parseJson(String myJson) {
+		JsonElement jsonElement = new JsonParser().parse(myJson);
+		JsonObject jObj = jsonElement.getAsJsonObject();
+		JsonArray routesArr = jObj.getAsJsonArray("routes");
+		JsonObject route1 = routesArr.get(0).getAsJsonObject();
+		JsonArray legs = route1.getAsJsonArray("legs");
+		JsonArray steps = legs.get(0).getAsJsonObject().get("steps")
+				.getAsJsonArray();
+
+		Iterator<JsonElement> iterator = steps.iterator();
+		ArrayList<Coordinates> coords = new ArrayList<>();
+		while (iterator.hasNext()) {
+			JsonObject obj = iterator.next().getAsJsonObject();
+			JsonObject startLoc = obj.getAsJsonObject("start_location");
+			JsonObject endLoc = obj.getAsJsonObject("end_location");
+
+			Coordinates start = new Coordinates(
+					startLoc.get("lat").getAsDouble(),
+					startLoc.get("lng").getAsDouble());
+			Coordinates end = new Coordinates(
+					endLoc.get("lat").getAsDouble(),
+					endLoc.get("lng").getAsDouble());
+			if (!coords.contains(start)) {
+				coords.add(start);
+			}
+			if (!coords.contains(end)) {
+				coords.add(end);
+			}
+		}
+
+		return coords;
 	}
 	
 	public String generateGRequest() { 
 		StringBuilder sb = new StringBuilder();
 		sb.append(HEADER);
 		sb.append(myFormat.toString() + "?");
-		sb.append("origin=" + myOrigin + "&");
-		sb.append("destination=" + myDest);
+//		sb.append("origin=" + myOrigin + "&");
+//		sb.append("destination=" + myDest);
+		sb.append("origin=" + myOriginCoordinates.convertToString() + "&");
+		sb.append("destination=" + myDestCoordinates.convertToString());
 		if (myAvoid != null && !myAvoid.isEmpty()) { 
 			sb.append("?");
 			Iterator<ToAvoidGM> obs = myAvoid.iterator();
@@ -78,10 +126,16 @@ public class JavaRequestMessage {
 	
 	public void setRoute(Collection<String> theRoute) {
 		Iterator<String> iterator = theRoute.iterator();
-		myOrigin = iterator.next();
-		myOrigin = myOrigin.replaceAll(" ", "+");
-		myDest = iterator.next();
-		myDest = myDest.replaceAll(" ", "+");
+//		myOrigin = iterator.next();
+//		myOrigin = myOrigin.replaceAll(" ", "+");
+//		myDest = iterator.next();
+//		myDest = myDest.replaceAll(" ", "+");
+	}
+
+	public void setRouteCoords(Collection<Coordinates> theRoute) {
+		Iterator<Coordinates> iterator = theRoute.iterator();
+		myOriginCoordinates = iterator.next();
+		myDestCoordinates = iterator.next();
 	}
 	
 	public void setAvoid(Collection<ToAvoidGM> toAvoid) { 
