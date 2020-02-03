@@ -2,6 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="01a807e0-6773-4099-8f43-aae0fa50ab55" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/out/production/BingMapsAndOSM/JavaApiResponse.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/out/production/BingMapsAndOSM/JavaRequestMessage.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/out/production/BingMapsAndOSM/OutputFormats.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/JavaRequestMessage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/BingMapsRestApi/ActualPoints.class" afterPath="$PROJECT_DIR$/out/production/BingMapsRestApi/ActualPoints.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/BingMapsRestApi/Analysis.class" afterPath="$PROJECT_DIR$/out/production/BingMapsRestApi/Analysis.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/BingMapsRestApi/BingApiResponse.class" afterPath="$PROJECT_DIR$/out/production/BingMapsRestApi/BingApiResponse.class" />
@@ -14,9 +18,7 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/BingMapsRestApi/OsmApiResponse.class" afterPath="$PROJECT_DIR$/out/production/BingMapsRestApi/OsmApiResponse.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/BingMapsRestApi/OsmRequestMessage.class" afterPath="$PROJECT_DIR$/out/production/BingMapsRestApi/OsmRequestMessage.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/BingMapsRestApi/XYPlotter.class" afterPath="$PROJECT_DIR$/out/production/BingMapsRestApi/XYPlotter.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resources/project.properties" afterPath="$PROJECT_DIR$/resources/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Analysis.java" afterPath="$PROJECT_DIR$/src/Analysis.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Main.java" afterPath="$PROJECT_DIR$/src/Main.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -33,9 +35,15 @@
         <entry file="file://$PROJECT_DIR$/src/Analysis.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="232">
-              <caret line="145" column="53" lean-forward="false" selection-start-line="145" selection-start-column="53" selection-end-line="145" selection-end-column="53" />
+              <caret line="148" column="53" lean-forward="false" selection-start-line="148" selection-start-column="53" selection-end-line="148" selection-end-column="53" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <marker date="1580768315186" expanded="false" signature="11940:11951" ph=" { " />
+                <marker date="1580768315186" expanded="false" signature="11977:11983" ph=" }" />
+                <marker date="1580768315186" expanded="false" signature="13904:13915" ph=" { " />
+                <marker date="1580768315186" expanded="false" signature="13930:13936" ph=" }" />
+                <marker date="1580768315186" expanded="false" signature="14000:14011" ph=" { " />
+                <marker date="1580768315186" expanded="false" signature="14057:14063" ph=" }" />
               </folding>
             </state>
           </provider>
@@ -771,7 +779,7 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3317647" sideWeight="0.5037594" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="JRebel Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4" sideWeight="0.55961335" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="JRebel Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4" sideWeight="0.5300752" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="JRebel Executor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -780,9 +788,9 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973147" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17293233" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4" sideWeight="0.44038668" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.44038668" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32875368" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34941176" sideWeight="0.4720129" order="18" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34941176" sideWeight="0.4699248" order="18" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
@@ -820,19 +828,19 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/Analysis.java</url>
-          <line>45</line>
+          <line>48</line>
           <properties />
           <option name="timeStamp" value="154" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/Analysis.java</url>
-          <line>40</line>
+          <line>43</line>
           <properties />
           <option name="timeStamp" value="161" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/Analysis.java</url>
-          <line>65</line>
+          <line>68</line>
           <properties />
           <option name="timeStamp" value="165" />
         </line-breakpoint>
@@ -897,6 +905,12 @@
           <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <marker date="1580768315186" expanded="false" signature="11940:11951" ph=" { " />
+            <marker date="1580768315186" expanded="false" signature="11977:11983" ph=" }" />
+            <marker date="1580768315186" expanded="false" signature="13904:13915" ph=" { " />
+            <marker date="1580768315186" expanded="false" signature="13930:13936" ph=" }" />
+            <marker date="1580768315186" expanded="false" signature="14000:14011" ph=" { " />
+            <marker date="1580768315186" expanded="false" signature="14057:14063" ph=" }" />
           </folding>
         </state>
       </provider>
@@ -975,6 +989,12 @@
           <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <marker date="1580768315186" expanded="false" signature="11940:11951" ph=" { " />
+            <marker date="1580768315186" expanded="false" signature="11977:11983" ph=" }" />
+            <marker date="1580768315186" expanded="false" signature="13904:13915" ph=" { " />
+            <marker date="1580768315186" expanded="false" signature="13930:13936" ph=" }" />
+            <marker date="1580768315186" expanded="false" signature="14000:14011" ph=" { " />
+            <marker date="1580768315186" expanded="false" signature="14057:14063" ph=" }" />
           </folding>
         </state>
       </provider>
@@ -1239,9 +1259,15 @@
     <entry file="file://$PROJECT_DIR$/src/Analysis.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="232">
-          <caret line="145" column="53" lean-forward="false" selection-start-line="145" selection-start-column="53" selection-end-line="145" selection-end-column="53" />
+          <caret line="148" column="53" lean-forward="false" selection-start-line="148" selection-start-column="53" selection-end-line="148" selection-end-column="53" />
           <folding>
             <element signature="imports" expanded="true" />
+            <marker date="1580768315186" expanded="false" signature="11940:11951" ph=" { " />
+            <marker date="1580768315186" expanded="false" signature="11977:11983" ph=" }" />
+            <marker date="1580768315186" expanded="false" signature="13904:13915" ph=" { " />
+            <marker date="1580768315186" expanded="false" signature="13930:13936" ph=" }" />
+            <marker date="1580768315186" expanded="false" signature="14000:14011" ph=" { " />
+            <marker date="1580768315186" expanded="false" signature="14057:14063" ph=" }" />
           </folding>
         </state>
       </provider>

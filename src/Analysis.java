@@ -23,6 +23,7 @@ public class Analysis {
         getDeflectionBasedOnLineSegments(bingCoordinates, osmCoordinates);
     }
 
+    //for each osm point im checking the minimum distance to the bing curve to make sure it is less than a specified tolerance, using SQL
     private static void getDeflectionBasedOnLineSegments(ArrayList<Coordinates> bingCoordinates, ArrayList<Coordinates> osmCoordinates) {
         HashMap<Coordinates, Double> osmDistancesMap = new HashMap<>();
         int count = 0;
@@ -32,6 +33,8 @@ public class Analysis {
             double dist1 = getLeastDistanceFromSetOfLinesUsingSql(osmCoordinate, bingCoordinates);
 //            System.out.println("Point " + count + " difference is " + (dist - dist1));
 
+
+            //if its less than the threshold, we add it to osmDistance arraylist
             if (dist1 < PropertiesReader.getInt("tolerance")) {
                 osmDistancesMap.put(osmCoordinate, dist1);
             } else {
