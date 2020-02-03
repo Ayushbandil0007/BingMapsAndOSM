@@ -12,7 +12,7 @@ public class Analysis {
     private static double avgDeflection = 0d;
     private static int totalPoints = 0;
     private static HashMap<Integer, AreaDeflection> areaDefMap = new HashMap<>();
-
+    private static HashMap<Coordinates, AreaDeflection> areaHeatmap = new HashMap<>();
 
     public static void doAnalysis(ArrayList<Coordinates> bingCoordinates, ArrayList<Coordinates> osmCoordinates) {
 
@@ -24,7 +24,7 @@ public class Analysis {
     }
 
     private static void getDeflectionBasedOnLineSegments(ArrayList<Coordinates> bingCoordinates, ArrayList<Coordinates> osmCoordinates) {
-        ArrayList<Double> osmDistances = new ArrayList<>();
+        HashMap<Coordinates, Double> osmDistancesMap = new HashMap<>();
         int count = 0;
         for (Coordinates osmCoordinate : osmCoordinates) {
             count++;
@@ -33,13 +33,107 @@ public class Analysis {
 //            System.out.println("Point " + count + " difference is " + (dist - dist1));
 
             if (dist1 < PropertiesReader.getInt("tolerance")) {
-                osmDistances.add(dist1);
+                osmDistancesMap.put(osmCoordinate, dist1);
             } else {
 //                System.out.println("deflection for " + count + "th element " + osmCoordinate.getLat() + ", " + osmCoordinate.getLat() + " with distance " + dist1 + " is skipped");
             }
         }
+        updateAvgDeflection(new ArrayList<>(osmDistancesMap.values()));
+        updateHeatmap(osmDistancesMap);
+    }
 
-        updateAvgDeflection(osmDistances);
+    private static void updateHeatmap(HashMap<Coordinates, Double> osmDistances) {
+        if (areaHeatmap.size() == 0) {
+            areaHeatmap = intializeAreaHeatmap(Main.area);
+        }
+
+        for (Map.Entry<Coordinates, Double> dist : osmDistances.entrySet()) {
+            Double lat = dist.getKey().getLat();
+            Double lon = dist.getKey().getLon();
+
+            lat = Math.ceil(lat / 0.05) * 0.05;
+            lon = Math.ceil(lon / 0.05) * 0.05;
+            Coordinates cor = new Coordinates(lat, lon, 1);
+            if (areaHeatmap.containsKey(cor)) {
+                AreaDeflection avgDef = areaHeatmap.get(cor);
+                Integer noOfPoints = avgDef.getNoOfPoints();
+                Double avgDeflection = avgDef.getAvgDeflection();
+                avgDeflection = (avgDeflection * noOfPoints + dist.getValue()) / (noOfPoints + 1);
+                avgDef.setAvgDeflection(avgDeflection);
+                avgDef.setNoOfPoints(noOfPoints + 1);
+                areaHeatmap.put(cor, avgDef);
+            } else {
+                AreaDeflection avgDef = new AreaDeflection(new Area(Main.area, null, null), null, null, dist.getValue(), 1);
+                areaHeatmap.put(cor, avgDef);
+            }
+        }
+        System.out.println("   Updated heatmap using " + osmDistances.size() + " points");
+        updateheatmapTable();
+    }
+
+    private static void updateheatmapTable() {
+        String city = Main.area;
+        String clearQuery = PropertiesReader.getString("clearPrevHeatmapEntries");
+        clearQuery = clearQuery.replace("<CITY>", city);
+        ConnectionUtils.executeJdbcQuery(clearQuery);
+
+        String insertQuery = "";
+        ArrayList<String> queries = new ArrayList<>();
+
+        // Display the TreeMap which is naturally sorted
+        for (Map.Entry<Coordinates, AreaDeflection> x : areaHeatmap.entrySet()) {
+            AreaDeflection areaDeflection = x.getValue();
+            insertQuery = PropertiesReader.getString("heatMapInsertionQuery");
+            insertQuery = insertQuery.replace("<CITY>", city);
+            insertQuery = insertQuery.replace("<STATE>", "");
+            insertQuery = insertQuery.replace("<COUNTRY>", "");
+            insertQuery = insertQuery.replace("<LAT_MAX>", Double.toString(x.getKey().getLat()));
+            insertQuery = insertQuery.replace("<LONG_MAX>", Double.toString(x.getKey().getLon()));
+            insertQuery = insertQuery.replace("<DATASET_PTS_COUNT>", areaDeflection.getNoOfPoints().toString());
+            queries.add(insertQuery);
+        }
+        ConnectionUtils.executeJdbcBatchQuery(queries);
+    }
+
+    private static HashMap<Coordinates, AreaDeflection> intializeAreaHeatmap(String areaStr) {
+        HashMap<Coordinates, AreaDeflection> areaHeatmap = new HashMap<>();
+        Area area = new Area(areaStr);
+        Connection con = ConnectionUtils.getConnection();
+
+        String query = PropertiesReader.getString("heatmapSelectQuery");
+        if (area.getCity() != null) {
+            query = query.replace("<CITY>", area.getCity());
+        } else {
+            query = query.replace("CITY = '<CITY>'", "");
+        }
+        if (area.getState() != null) {
+            query = query.replace("<STATE>", area.getState());
+        } else {
+            query = query.replace(" and STATE = '<STATE>'", "");
+        }
+        if (area.getCountry() != null) {
+            query = query.replace("<COUNTRY>", area.getCountry());
+        } else {
+            query = query.replace(" and COUNTRY = '<COUNTRY>'", "");
+        }
+
+        PreparedStatement ps = null;
+        try {
+            ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Coordinates cor = new Coordinates(rs.getDouble("LAT_MAX"), rs.getDouble("LONG_MAX"), 1);
+                AreaDeflection areaDef = new AreaDeflection(area, null, null, rs.getDouble("AVG_DEFLECTION"), rs.getInt("DATASET_PTS_COUNT"));
+                areaHeatmap.put(cor, areaDef);
+            }
+            rs.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return areaHeatmap;
+
+
     }
 
     private static double getLeastDistanceFromSetOfLinesUsingSql(Coordinates osmCoordinate, ArrayList<Coordinates> bingCoordinates) {

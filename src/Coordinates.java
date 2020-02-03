@@ -8,6 +8,7 @@ public class Coordinates {
     private Double lon;
     private int routeId;
 
+    @Deprecated
     public Coordinates(Double lat, Double lon) {
         this.lat = lat;
         this.lon = lon;
@@ -52,7 +53,7 @@ public class Coordinates {
         }
     }
 
-    public String convertToString(){
+    public String  convertToString(){
         return this.getLat() + "," + this.getLon();
     }
 

@@ -27,7 +27,7 @@ public class Main {
             try {
                 processOneRoute(areaCoordinates);
             } catch (Exception e){
-                System.out.println("Could not process " + runCount + "th count");
+                System.out.println("Could not process " + (runCount + 1) + "th count");
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e1) {
@@ -83,10 +83,9 @@ public class Main {
             osmCoordinates = response.getOsmCoordinates();
         }
 
-//        generateGraph();
+        generateGraph();
 
         insertNewCordinates(areaCoordinates);
-
         Analysis.doAnalysis(bingCoordinates, osmCoordinates);
     }
 
