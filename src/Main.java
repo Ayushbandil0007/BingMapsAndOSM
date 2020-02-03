@@ -83,10 +83,10 @@ public class Main {
             osmCoordinates = response.getOsmCoordinates();
         }
 
-        generateGraph();
+//        generateGraph();
 
         insertNewCordinates(areaCoordinates);
-        Analysis.doAnalysis(bingCoordinates, osmCoordinates);
+//        Analysis.doAnalysis(bingCoordinates, osmCoordinates);
     }
 
     private static double getDist(Coordinates fromCor, Coordinates toCor) {

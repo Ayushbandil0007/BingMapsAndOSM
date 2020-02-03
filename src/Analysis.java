@@ -264,6 +264,7 @@ public class Analysis {
         return "'" + string + "'";
     }
 
+    @Deprecated
     private static double getLeastDistanceFromSetOfLinesUsingCode(Coordinates coordinates, ArrayList<Coordinates> bingCoordinates) {
         double min = Double.MAX_VALUE;
         for (int i = 1; i < bingCoordinates.size(); i++) {
@@ -278,6 +279,7 @@ public class Analysis {
         return min;
     }
 
+    @Deprecated
     private static double getLeastDisFromLine(Coordinates firstCor, Coordinates secondCor, Coordinates coordinates) {
         double y1 = firstCor.getLat() * latFactor();
         double x1 = firstCor.getLon() * lonFactor(firstCor.getLat());
@@ -308,14 +310,17 @@ public class Analysis {
         return Math.min(Math.sqrt(dis1), Math.sqrt(dis2));
     }
 
+    @Deprecated
     private static double latFactor() {
         return 111000d;
     }
 
+    @Deprecated
     private static double lonFactor(double y1) {
         return 111000d * Math.cos(y1 * Math.PI / 180);
     }
 
+    @Deprecated
     private static void getDeflectionBasedOnPoints(ArrayList<Coordinates> bingCoordinates, ArrayList<Coordinates> osmCoordinates) {
         ArrayList<Double> deflections = new ArrayList<>();
         for (int i = 0; i < osmCoordinates.size(); i++) {
